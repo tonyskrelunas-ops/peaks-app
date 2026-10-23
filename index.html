@@ -1,0 +1,402 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ancestral Peaks</title>
+<meta name="description" content="Long-form guided sound for the gym, the road, and the dark morning.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#141814">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Peaks">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{--bg:#141814;--bg2:#191e19;--cream:#F2EFE6;--cream2:#FBF9F3;--sand:#C3C6B8;
+ --gold:#C6A45F;--goldlt:#E3C68C;--clay:#B8503A;--rule:rgba(255,255,255,.11);
+ --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--cream);overflow:hidden;
+ font:400 17px/1.6 Georgia,"Palatino Linotype",Palatino,serif;-webkit-font-smoothing:antialiased}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-x:hidden;
+ padding:calc(var(--safe-t) + 22px) 22px calc(var(--safe-b) + 22px);overflow-y:auto;
+ -webkit-overflow-scrolling:touch}
+.screen.on{display:flex;animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:"Courier New",ui-monospace,Menlo,monospace;text-transform:uppercase;
+ letter-spacing:.17em;font-size:.66rem;color:var(--gold);margin:0 0 .8rem}
+h1{font-size:clamp(2rem,1.6rem + 3vw,2.9rem);line-height:1.04;letter-spacing:-.03em;
+ color:var(--cream2);margin:0 0 .8rem;font-weight:700}
+h2{font-size:1.35rem;color:var(--cream2);margin:0;font-weight:700;letter-spacing:-.02em}
+p{margin:0 0 1rem;color:var(--sand);max-width:36em}
+.btn{background:var(--clay);color:#fff;border:0;border-radius:3px;padding:1em 2em;
+ font:inherit;font-size:1.02rem;cursor:pointer;width:100%;max-width:22rem}
+.btn:disabled{opacity:.3}
+.ghost{background:none;border:0;color:var(--sand);font:inherit;font-size:.9rem;opacity:.55;
+ text-decoration:underline;cursor:pointer;padding:.6em 0}
+.spacer{flex:1}
+textarea{width:100%;background:rgba(0,0,0,.34);color:var(--cream2);border:1px solid var(--rule);
+ border-radius:3px;padding:.9em 1em;font:inherit;font-size:1.05rem;resize:none}
+textarea:focus{outline:none;border-color:var(--gold)}
+/* breath */
+.orbwrap{flex:1;display:grid;place-items:center;position:relative;min-height:230px}
+.orb{width:120px;height:120px;border-radius:50%;border:1px solid var(--gold);
+ background:radial-gradient(circle at 50% 45%,rgba(198,164,95,.2),transparent 70%);
+ transition:transform 4s cubic-bezier(.4,0,.5,1),opacity 4s ease}
+.cnt{position:absolute;text-align:center}
+.cnt b{display:block;font-family:"Courier New",monospace;text-transform:uppercase;
+ letter-spacing:.2em;font-size:.68rem;color:var(--goldlt);font-weight:400;margin-bottom:.25rem}
+.cnt span{font-size:2.2rem;color:var(--cream2);font-weight:700}
+/* questions */
+.qwrap{margin-top:.4rem}
+.qb{border-top:1px solid var(--rule);padding:1.3rem 0}
+.qb:first-child{border-top:0;padding-top:.3rem}
+.qb label{display:block;color:var(--cream2);font-size:1.08rem;margin-bottom:.6rem;line-height:1.4}
+.qb textarea{min-height:5.2em}
+.qb .n{font-family:"Courier New",monospace;font-size:.62rem;letter-spacing:.14em;
+ color:var(--gold);display:block;margin-bottom:.4rem}
+.qb .short{font-size:.8rem;color:var(--sand);opacity:.55;margin:.4rem 0 0}
+/* sessions */
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.4rem}
+.list{list-style:none;padding:0;margin:0;width:100%}
+.item{border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.2);
+ padding:1.1rem 1.2rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:center;
+ cursor:pointer;transition:border-color .2s}
+.item:active{border-color:var(--gold)}
+.item.locked{opacity:.4;cursor:default}
+.item .meta{flex:1;min-width:0}
+.item h3{margin:0;font-size:1.12rem;color:var(--cream2);font-weight:700}
+.item p{margin:.2rem 0 0;font-size:.92rem;color:var(--sand);max-width:none}
+.mins{font-family:"Courier New",monospace;font-size:.72rem;letter-spacing:.1em;color:var(--gold);
+ white-space:nowrap}
+.dl{background:none;border:1px solid var(--rule);color:var(--sand);border-radius:3px;
+ font:400 .68rem "Courier New",monospace;letter-spacing:.1em;padding:.5em .8em;cursor:pointer}
+.dl.done{border-color:var(--gold);color:var(--goldlt)}
+/* player */
+#player{justify-content:center;align-items:center;text-align:center}
+.art{width:min(62vw,250px);aspect-ratio:1;border-radius:50%;border:1px solid var(--gold);
+ background:radial-gradient(circle at 50% 42%,rgba(198,164,95,.18),transparent 72%);
+ display:grid;place-items:center;margin-bottom:2rem;position:relative}
+.art.playing{animation:breathe 9s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.art .glyph{font-family:"Courier New",monospace;font-size:.6rem;letter-spacing:.24em;
+ text-transform:uppercase;color:var(--gold);opacity:.65}
+.pbar{width:100%;max-width:26rem;height:3px;background:rgba(255,255,255,.12);border-radius:3px;
+ margin:1.6rem 0 .5rem;cursor:pointer;position:relative}
+.pbar i{display:block;height:100%;background:var(--gold);border-radius:3px;width:0}
+.times{width:100%;max-width:26rem;display:flex;justify-content:space-between;
+ font-family:"Courier New",monospace;font-size:.7rem;color:var(--sand);letter-spacing:.08em}
+.controls{display:flex;align-items:center;gap:2.2rem;margin-top:1.8rem}
+.ctl{background:none;border:0;color:var(--cream);cursor:pointer;padding:.4rem;
+ font-family:"Courier New",monospace;font-size:.68rem;letter-spacing:.1em;opacity:.7}
+.play{width:78px;height:78px;border-radius:50%;background:var(--clay);border:0;color:#fff;
+ font-size:1.6rem;cursor:pointer;display:grid;place-items:center;line-height:1}
+.note{margin-top:2rem;font-size:.92rem;color:var(--sand);opacity:.8;max-width:30em}
+.back{position:absolute;top:calc(var(--safe-t) + 18px);left:20px;background:none;border:0;
+ color:var(--sand);font:inherit;font-size:.9rem;opacity:.6;cursor:pointer}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--safe-b) + 26px);
+ background:var(--bg2);border:1px solid var(--rule);border-radius:3px;padding:.7em 1.2em;
+ font-size:.86rem;color:var(--cream);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+/* tabs + reading */
+.tabs{display:flex;gap:1.6rem;border-bottom:1px solid var(--rule);margin:0 0 1.2rem}
+.tab{background:none;border:0;color:var(--sand);font:inherit;font-size:1rem;padding:.5rem 0;cursor:pointer;
+ border-bottom:2px solid transparent;margin-bottom:-1px;opacity:.7}
+.tab.on{color:var(--cream2);border-bottom-color:var(--gold);opacity:1}
+.pane{display:none;width:100%}.pane.on{display:block}
+.item .kind{font-family:"Courier New",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+#reading{padding-top:calc(var(--safe-t) + 64px)}
+#reading .lead{color:var(--cream);font-size:1.05rem}
+#reading ol{padding-left:1.3rem;margin:1.2rem 0;color:var(--sand)}
+#reading li{margin:0 0 .9rem;padding-left:.3rem;line-height:1.55}
+#reading .close{font-style:italic;color:var(--goldlt);border-top:1px solid var(--rule);padding-top:1rem;margin-top:1.4rem}
+.empty{color:var(--sand);opacity:.7;font-size:.95rem;border:1px dashed var(--rule);border-radius:4px;padding:1rem 1.1rem}
+@media (prefers-reduced-motion:reduce){.orb,.art{transition:none;animation:none}}
+</style></head><body>
+
+<div class="screen on" id="door">
+  <p class="eyebrow" id="dlevel">Ancestral Peaks</p>
+  <h1>The door is breath.</h1>
+  <p id="dsay">Five rounds of counted breathing, about ninety seconds. Then you are in.</p>
+  <div class="spacer"></div>
+  <button class="btn" id="begin">Begin</button>
+  <button class="ghost" id="skip" style="margin-top:1rem">I have already settled &rarr;</button>
+</div>
+
+<div class="screen" id="breath">
+  <p class="eyebrow" style="text-align:center">Round <b id="rnd">1</b> of <b id="rtot">5</b></p>
+  <div class="orbwrap"><div class="orb" id="orb"></div>
+    <div class="cnt"><b id="cue">In</b><span id="num">4</span></div></div>
+  <p id="hint" style="text-align:center;margin:0 auto">Let the jaw drop. Let the shoulders drop.</p>
+  <button class="ghost" id="skip2" style="margin-top:1.2rem">Skip ahead &rarr;</button>
+</div>
+
+
+
+<div class="screen" id="quest">
+  <p class="eyebrow" id="qlevel"></p>
+  <h1 id="qhead">Sit with these.</h1>
+  <p id="qlead"></p>
+  <div id="qbody"></div>
+  <div class="spacer"></div>
+  <button class="btn" id="qdone" disabled>Go on</button>
+  <p class="eyebrow" id="qcount" style="margin:.8rem 0 0;opacity:.6"></p>
+</div>
+
+<div class="screen" id="wall">
+  <p class="eyebrow" id="wlevel"></p>
+  <h1>This one needs a name.</h1>
+  <p>The Door and The Fire ask nothing of you but breath. From here on the site has to be able to recognise you when you come back, because what you write is kept, and because The Council is people meeting rather than a page.</p>
+  <p style="opacity:.75">Accounts are not open yet. Nobody has practiced long enough to need one, and building it before then would be building for nobody.</p>
+  <div class="spacer"></div>
+  <button class="ghost" id="wback">&larr; Back</button>
+</div>
+
+<div class="screen" id="library">
+  <div class="tabs" role="tablist"><button class="tab on" data-tab="listen" role="tab">Listen</button><button class="tab" data-tab="read" role="tab">Read</button></div>
+  <div class="pane on" id="pane-listen">
+    <div class="hdr"><div><p class="eyebrow" style="margin:0 0 .3rem">Sessions</p><h2>Put it on and go.</h2></div></div>
+    <ul class="list" id="list"></ul>
+  </div>
+  <div class="pane" id="pane-read">
+    <div class="hdr"><div><p class="eyebrow" style="margin:0 0 .3rem">Practices</p><h2>Read it once. Keep it close.</h2></div></div>
+    <ul class="list" id="rlist"></ul>
+  </div>
+  <p class="eyebrow" id="depthline" style="margin-top:1.4rem"></p>
+  <div class="spacer"></div>
+  <button class="btn" id="sit" style="margin-top:.4rem">Sit</button>
+  <button class="ghost" id="install" style="display:none">Add to home screen</button>
+</div>
+
+<div class="screen" id="reading">
+  <button class="back" id="rback">&larr; Practices</button>
+  <p class="eyebrow" id="rkind"></p>
+  <h1 id="rtitle"></h1>
+  <p class="lead" id="rlead"></p>
+  <ol id="rsteps"></ol>
+  <p class="close" id="rclose"></p>
+</div>
+
+<div class="screen" id="player">
+  <button class="back" id="back">&larr; Sessions</button>
+  <div class="art" id="art"><span class="glyph">&#9679;</span></div>
+  <h2 id="ptitle"></h2>
+  <p id="psub" style="margin:.3rem 0 0;font-size:.94rem"></p>
+  <div class="pbar" id="pbar"><i id="pfill"></i></div>
+  <div class="times"><span id="tcur">0:00</span><span id="tdur">--:--</span></div>
+  <div class="controls">
+    <button class="ctl" id="b15">&minus;15</button>
+    <button class="play" id="pp">&#9654;</button>
+    <button class="ctl" id="f30">+30</button>
+  </div>
+  <p class="note" id="pnote"></p>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="au" preload="metadata" playsinline></audio>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var K='ap_state';
+function load(){try{return JSON.parse(localStorage.getItem(K))||{v:[],pos:{}}}catch(e){return{v:[],pos:{}}}}
+function save(s){try{localStorage.setItem(K,JSON.stringify(s))}catch(e){}}
+function show(id){['door','breath','quest','wall','library','player','reading'].forEach(function(k){
+  $(k).classList.toggle('on',k===id)})}
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');
+  setTimeout(function(){t.classList.remove('on')},2200)}
+
+/* ---------- the breath ---------- */
+var STEPS=[{c:'In',s:4,z:1.5},{c:'Hold',s:4,z:1.5},{c:'Out',s:6,z:1},{c:'Hold',s:4,z:1}];
+var HINTS=['Let the jaw drop. Let the shoulders drop.','The count is an anchor, not a rule.',
+ 'The long exhale is where the calm lives.','Nothing to achieve here.','Stay with it.'];
+var t=null,ROUNDS=5,afterBreath=null;
+function run(r,i){
+  if(r>ROUNDS){clearInterval(t);(afterBreath||function(){buildQuestions(pending||1)})();return}
+  $('rnd').textContent=r; $('hint').textContent=HINTS[(r-1)%HINTS.length];
+  var s=STEPS[i],left=s.s;
+  $('cue').textContent=s.c; $('num').textContent=left;
+  $('orb').style.transitionDuration=s.s+'s';
+  $('orb').style.transform='scale('+s.z+')';
+  $('orb').style.opacity=(s.c==='Out')?.55:1;
+  clearInterval(t);
+  t=setInterval(function(){left--;$('num').textContent=left>0?left:0;
+    if(left<=0){clearInterval(t);var ni=i+1,nr=r;if(ni>=STEPS.length){ni=0;nr=r+1}run(nr,ni)}},1000);
+}
+$('begin').onclick=function(){openGate(depthNow())};
+$('skip').onclick=$('skip2').onclick=function(){clearInterval(t);
+  if(!pending) pending=1;
+  buildQuestions(pending)};
+function recordSitting(){var s=load();s.v=s.v||[];s.v.push(Date.now());save(s)}
+$('qdone').onclick=function(){
+  var g=GATES[String(pending)];
+  g.questions.forEach(function(q){var ta=document.getElementById('q_'+q.id);
+    if(ta&&ta.value.trim()) saveAnswer(pending,q.id,ta.value.trim())});
+  recordSitting(); pending=null; afterBreath=null; show('library'); draw();
+};
+$('wback').onclick=function(){pending=null;show('library');draw()};
+$('sit').onclick=function(){openGate(depthNow())};
+
+/* ---------- gates: questions per level ---------- */
+var GATES={},pending=null;
+function answers(){var s=load();return s.ans||{}}
+function saveAnswer(level,qid,text){var s=load();s.ans=s.ans||{};
+  s.ans[level]=s.ans[level]||{}; s.ans[level][qid]={t:text,at:Date.now()}; save(s)}
+
+function openGate(level){
+  var g=GATES[String(level)]; if(!g){show('library');return}
+  if(g.account){ $('wlevel').textContent=g.name; show('wall'); return; }
+  pending=level; ROUNDS=g.rounds||5; $('rtot').textContent=ROUNDS;
+  afterBreath=function(){ buildQuestions(level) };
+  show('breath'); run(1,0);
+}
+
+function buildQuestions(level){
+  var g=GATES[String(level)],prev=answers()[level]||{};
+  $('qlevel').textContent=g.name;
+  $('qhead').textContent=g.questions.length>1?'Sit with these.':'One sentence.';
+  $('qlead').textContent=g.lead;
+  var box=$('qbody'); box.innerHTML='';
+  g.questions.forEach(function(q,i){
+    var d=document.createElement('div'); d.className='qb';
+    d.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<label for="q_'+q.id+'">'+q.q+'</label>'+
+      '<textarea id="q_'+q.id+'" rows="3" placeholder="&hellip;"></textarea>'+
+      '<p class="short"></p>';
+    box.appendChild(d);
+    var ta=d.querySelector('textarea');
+    if(prev[q.id]) ta.value=prev[q.id].t;
+    ta.addEventListener('input',function(){check(level)});
+    ta.addEventListener('blur',function(){ if(ta.value.trim()) saveAnswer(level,q.id,ta.value.trim()) });
+  });
+  show('quest'); check(level);
+}
+
+function check(level){
+  var g=GATES[String(level)],ok=0;
+  g.questions.forEach(function(q){
+    var ta=document.getElementById('q_'+q.id); if(!ta) return;
+    var n=ta.value.trim().length, good=n>=(q.min||12);
+    var p=ta.parentNode.querySelector('.short');
+    p.textContent = good? '' : (n? 'A little more.' : '');
+    if(good) ok++;
+  });
+  $('qdone').disabled = ok<g.questions.length;
+  $('qcount').textContent = ok+' of '+g.questions.length+' answered';
+}
+
+/* ---------- depth ---------- */
+function stats(){var s=load(),v=(s.v||[]).slice().sort(),n=Date.now(),D=864e5;
+  return{s:v.length,y:v.length?Math.floor((n-v[0])/D):0,w:v.filter(function(x){return n-x<=7*D}).length}}
+function depthNow(){var st=stats();
+  if(st.s>=24&&st.y>=60&&st.w>=3) return 4;
+  if(st.s>=12&&st.y>=21&&st.w>=3) return 3;
+  if(st.s>=6&&st.y>=7) return 2;
+  return 1}
+var NAMES={1:'The Door',2:'The Fire',3:'The Crossing',4:'The Council'};
+
+/* ---------- library ---------- */
+var SESSIONS=[],cur=null;
+function fmt(x){if(!isFinite(x))return'--:--';x=Math.floor(x);
+  var m=Math.floor(x/60),s=x%60;return m+':'+(s<10?'0':'')+s}
+function draw(){
+  var d=depthNow(),st=stats(),ul=$('list');ul.innerHTML='';
+  if(!SESSIONS.length){ul.innerHTML='<li class="empty">Sessions are being recorded. The practices are open now, under Read.</li>';}
+  SESSIONS.forEach(function(x){
+    var ok=x.depth<=d;
+    var li=document.createElement('li');
+    li.className='item'+(ok?'':' locked');
+    li.innerHTML='<div class="meta"><h3>'+x.title+'</h3><p>'+(ok?x.subtitle:'Opens at '+NAMES[x.depth])+'</p></div>'+
+      '<span class="mins">'+x.minutes+' min</span>'+
+      (ok?'<button class="dl" data-dl="'+x.file+'">Save</button>':'');
+    if(ok) li.onclick=function(e){if(e.target.dataset.dl)return;open_(x)};
+    ul.appendChild(li);
+  });
+  ul.querySelectorAll('[data-dl]').forEach(function(b){
+    b.onclick=function(e){e.stopPropagation();
+      if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+        navigator.serviceWorker.controller.postMessage({type:'cache-audio',url:b.dataset.dl});
+        b.textContent='Saving';
+      } else toast('Offline saving needs the installed app.');
+    };
+  });
+  $('depthline').textContent=NAMES[d]+'  ·  '+st.s+' sittings  ·  '+st.y+' days  ·  '+st.w+' this week';
+}
+navigator.serviceWorker&&navigator.serviceWorker.addEventListener('message',function(e){
+  if(e.data.type==='cached'){toast('Saved for offline.');
+    document.querySelectorAll('[data-dl="'+e.data.url+'"]').forEach(function(b){b.textContent='Saved';b.classList.add('done')})}
+  if(e.data.type==='cache-failed'){toast('Could not save that one.');
+    document.querySelectorAll('[data-dl="'+e.data.url+'"]').forEach(function(b){b.textContent='Save'})}
+});
+
+/* ---------- tabs + readings ---------- */
+var READINGS=[];
+function tab(name){document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.tab===name)});
+  $('pane-listen').classList.toggle('on',name==='listen'); $('pane-read').classList.toggle('on',name==='read');
+  var s=load(); s.tab=name; save(s);}
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){tab(b.dataset.tab)}});
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function drawReadings(){var ul=$('rlist');ul.innerHTML='';
+  READINGS.forEach(function(r){var li=document.createElement('li');li.className='item';
+    li.innerHTML='<div class="meta"><span class="kind">'+esc(r.kind)+'</span><h3>'+esc(r.title)+'</h3></div>';
+    li.onclick=function(){openReading(r)}; ul.appendChild(li)});}
+function openReading(r){$('rkind').textContent=r.kind;$('rtitle').textContent=r.title;$('rlead').textContent=r.lead;
+  var ol=$('rsteps');ol.innerHTML='';(r.steps||[]).forEach(function(t){var li=document.createElement('li');li.textContent=t;ol.appendChild(li)});
+  $('rclose').textContent=r.close||'';show('reading');$('reading').scrollTop=0;}
+$('rback').onclick=function(){show('library');tab('read')};
+
+/* ---------- player ---------- */
+var au=$('au');
+function open_(x){
+  cur=x; show('player');
+  $('ptitle').textContent=x.title; $('psub').textContent=x.subtitle; $('pnote').textContent=x.note||'';
+  au.src=x.file;
+  var s=load(); var p=(s.pos||{})[x.id];
+  au.onloadedmetadata=function(){ $('tdur').textContent=fmt(au.duration); if(p&&p<au.duration-20) au.currentTime=p; };
+  if('mediaSession' in navigator){
+    navigator.mediaSession.metadata=new MediaMetadata({
+      title:x.title, artist:'Ancestral Peaks', album:NAMES[x.depth],
+      artwork:[{src:'icons/icon-512.png',sizes:'512x512',type:'image/png'}]});
+    navigator.mediaSession.setActionHandler('play',function(){au.play()});
+    navigator.mediaSession.setActionHandler('pause',function(){au.pause()});
+    navigator.mediaSession.setActionHandler('seekbackward',function(){au.currentTime=Math.max(0,au.currentTime-15)});
+    navigator.mediaSession.setActionHandler('seekforward',function(){au.currentTime=au.currentTime+30});
+  }
+  au.play().catch(function(){});
+}
+au.onplay=function(){$('pp').innerHTML='&#10073;&#10073;';$('art').classList.add('playing')};
+au.onpause=function(){$('pp').innerHTML='&#9654;';$('art').classList.remove('playing');store()};
+au.ontimeupdate=function(){
+  $('tcur').textContent=fmt(au.currentTime);
+  if(au.duration) $('pfill').style.width=(100*au.currentTime/au.duration)+'%';
+};
+au.onended=function(){store(true)};
+function store(done){ if(!cur)return; var s=load(); s.pos=s.pos||{};
+  s.pos[cur.id]=done?0:Math.floor(au.currentTime); save(s); }
+$('pp').onclick=function(){au.paused?au.play():au.pause()};
+$('b15').onclick=function(){au.currentTime=Math.max(0,au.currentTime-15)};
+$('f30').onclick=function(){au.currentTime=au.currentTime+30};
+$('pbar').onclick=function(e){if(!au.duration)return;
+  var r=this.getBoundingClientRect(); au.currentTime=au.duration*((e.clientX-r.left)/r.width)};
+$('back').onclick=function(){store();show('library');draw()};
+window.addEventListener('pagehide',function(){store()});
+
+/* ---------- install + boot ---------- */
+var dp=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;$('install').style.display='block'});
+$('install').onclick=function(){if(dp){dp.prompt();dp=null;$('install').style.display='none'}};
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function(){});
+
+Promise.all([fetch('sessions.json').then(function(r){return r.json()}),
+             fetch('gates.json').then(function(r){return r.json()}),
+             fetch('readings.json').then(function(r){return r.json()}).catch(function(){return []})])
+.then(function(res){
+  SESSIONS=res[0]; GATES=res[1]; READINGS=res[2]; drawReadings();
+  var d=depthNow(),g=GATES[String(d)];
+  if(g){ $('dlevel').textContent=g.name;
+    $('dsay').textContent=g.rounds+' rounds of counted breathing, then '+
+      (g.questions.length===1?'one sentence':g.questions.length+' things to sit with')+'.'; }
+  var s=load();
+  if(s.v&&s.v.length){show('library');draw();if(s.tab)tab(s.tab)}
+}).catch(function(){toast('Could not load sessions.')});
+})();
+</script></body></html>

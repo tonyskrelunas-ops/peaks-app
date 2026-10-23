@@ -1,0 +1,45 @@
+{
+  "1": {
+    "name": "The Door",
+    "account": false,
+    "rounds": 5,
+    "lead": "One sentence. Nobody reads it and it is not sent anywhere. Writing it is the point.",
+    "questions": [
+      { "id": "why", "q": "Why did you come?", "min": 12 }
+    ]
+  },
+  "2": {
+    "name": "The Fire",
+    "account": false,
+    "rounds": 7,
+    "lead": "Three things to sit with. Take the time. There is no hurry and nothing is scored.",
+    "questions": [
+      { "id": "loud",   "q": "What has been loud lately?", "min": 15 },
+      { "id": "carry",  "q": "What did you carry in here that is not yours to carry today?", "min": 15 },
+      { "id": "hour",   "q": "What would a good hour look like, if you got one?", "min": 15 }
+    ]
+  },
+  "3": {
+    "name": "The Crossing",
+    "account": true,
+    "rounds": 7,
+    "lead": "These are not for answering quickly. You can leave and come back; what you write is kept for you and nobody else.",
+    "questions": [
+      { "id": "taught",  "q": "Who taught you something you still use, and have you ever told them?", "min": 25 },
+      { "id": "unseen",  "q": "What are you practicing that you would keep doing if no one ever noticed?", "min": 25 },
+      { "id": "setdown", "q": "Name one thing your people set down that you would like back.", "min": 25 },
+      { "id": "idle",    "q": "Where does your attention go when nothing is asked of it?", "min": 25 }
+    ]
+  },
+  "4": {
+    "name": "The Council",
+    "account": true,
+    "rounds": 7,
+    "lead": "The Council is not about you. These questions are the price of a seat, and the answers are read by the people already sitting.",
+    "questions": [
+      { "id": "carryfor", "q": "What could you carry for someone else right now?", "min": 30 },
+      { "id": "waiting",  "q": "Who is waiting on something from you?", "min": 25 },
+      { "id": "handon",   "q": "What have you learned that is worth handing on, and to whom?", "min": 30 }
+    ]
+  }
+}
